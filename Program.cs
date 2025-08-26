@@ -12,7 +12,7 @@ class SimpleHttpServer
         Console.WriteLine("1 - Normal (unthreaded)");
         Console.WriteLine("2 - Threaded (each request handled in a new thread)");
         Console.Write("Enter choice (1 or 2): ");
-        string choice = Console.ReadLine();
+        string choice = Console.ReadLine() ?? "1";;
 
         HttpListener listener = new HttpListener();
         listener.Prefixes.Add("http://localhost:5000/");
@@ -25,7 +25,9 @@ class SimpleHttpServer
             while (true)
             {
                 HttpListenerContext context = await listener.GetContextAsync();
+                #pragma warning disable CS4014
                 Task.Run(() => HandleRequestAsync(context));
+                #pragma warning restore CS4014
             }
         }
         else
@@ -72,14 +74,16 @@ class SimpleHttpServer
         context.Response.ContentLength64 = buffer.Length;
         await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
         if (delayMs > 0)
+            Console.WriteLine("Tick");
             await Task.Delay(delayMs);
+            Console.WriteLine("Tock");
         context.Response.OutputStream.Close();
     }
 
     static async Task HandleGetAsync(HttpListenerContext context)
     {
         string comment = "<p>GET called.</p>";
-        await WriteResponseAsync(context, "Hello from C# HTTP Server! (GET)", comment);
+        await WriteResponseAsync(context, "Hello from C# HTTP Server! (GET)", comment, 2000);
     }
 
     static async Task HandlePostAsync(HttpListenerContext context)
@@ -90,7 +94,7 @@ class SimpleHttpServer
             postData = await reader.ReadToEndAsync();
         }
         string comment = $"<p>POST called. Payload:</p><pre>{WebUtility.HtmlEncode(postData)}</pre>";
-        await WriteResponseAsync(context, "POST data received:", comment);
+        await WriteResponseAsync(context, "POST data received:", comment, 2000);
     }
 
     static async Task HandlePutAsync(HttpListenerContext context)
@@ -108,12 +112,12 @@ class SimpleHttpServer
     static async Task HandleDeleteAsync(HttpListenerContext context)
     {
         string comment = "<p>DELETE called.</p>";
-        await WriteResponseAsync(context, "DELETE received", comment);
+        await WriteResponseAsync(context, "DELETE received", comment, 2000);
     }
 
     static async Task HandleOtherAsync(HttpListenerContext context)
     {
         string comment = $"<p>{context.Request.HttpMethod} called.</p>";
-        await WriteResponseAsync(context, "Method not supported", comment);
+        await WriteResponseAsync(context, "Method not supported", comment, 2000);
     }
 }

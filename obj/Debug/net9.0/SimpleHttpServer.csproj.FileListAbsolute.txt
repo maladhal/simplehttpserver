@@ -12,3 +12,4 @@ C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\refint\SimpleHttpS
 C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\SimpleHttpServer.pdb
 C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\SimpleHttpServer.genruntimeconfig.cache
 C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\ref\SimpleHttpServer.dll
+C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\SimpleHttpServer.sourcelink.json
