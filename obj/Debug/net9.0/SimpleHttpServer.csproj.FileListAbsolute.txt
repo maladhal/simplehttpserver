@@ -1,0 +1,14 @@
+C:\Users\mo\OneDrive\source\SimpleHttpServer\bin\Debug\net9.0\SimpleHttpServer.exe
+C:\Users\mo\OneDrive\source\SimpleHttpServer\bin\Debug\net9.0\SimpleHttpServer.deps.json
+C:\Users\mo\OneDrive\source\SimpleHttpServer\bin\Debug\net9.0\SimpleHttpServer.runtimeconfig.json
+C:\Users\mo\OneDrive\source\SimpleHttpServer\bin\Debug\net9.0\SimpleHttpServer.dll
+C:\Users\mo\OneDrive\source\SimpleHttpServer\bin\Debug\net9.0\SimpleHttpServer.pdb
+C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\SimpleHttpServer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\SimpleHttpServer.AssemblyInfoInputs.cache
+C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\SimpleHttpServer.AssemblyInfo.cs
+C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\SimpleHttpServer.csproj.CoreCompileInputs.cache
+C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\SimpleHttpServer.dll
+C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\refint\SimpleHttpServer.dll
+C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\SimpleHttpServer.pdb
+C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\SimpleHttpServer.genruntimeconfig.cache
+C:\Users\mo\OneDrive\source\SimpleHttpServer\obj\Debug\net9.0\ref\SimpleHttpServer.dll
