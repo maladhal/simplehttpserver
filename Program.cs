@@ -6,13 +6,23 @@ using System.IO;
 
 class SimpleHttpServer
 {
+    // Global page state
+    static string currentPage = "";
+
     static async Task Main(string[] args)
     {
         Console.WriteLine("Select server mode:");
         Console.WriteLine("1 - Normal (unthreaded)");
         Console.WriteLine("2 - Threaded (each request handled in a new thread)");
         Console.Write("Enter choice (1 or 2): ");
-        string choice = Console.ReadLine() ?? "1";;
+        string choice = Console.ReadLine() ?? "1";
+
+        // Initialize currentPage with landing page or default
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "html", "index.html");
+        if (File.Exists(filePath))
+            currentPage = await File.ReadAllTextAsync(filePath);
+        else
+            currentPage = "<html><body><h1>Welcome!</h1></body></html>";
 
         HttpListener listener = new HttpListener();
         listener.Prefixes.Add("http://localhost:5000/");
@@ -25,9 +35,9 @@ class SimpleHttpServer
             while (true)
             {
                 HttpListenerContext context = await listener.GetContextAsync();
-                #pragma warning disable CS4014
+#pragma warning disable CS4014
                 Task.Run(() => HandleRequestAsync(context));
-                #pragma warning restore CS4014
+#pragma warning restore CS4014
             }
         }
         else
@@ -66,24 +76,21 @@ class SimpleHttpServer
         }
     }
 
-    static async Task WriteResponseAsync(HttpListenerContext context, string title, string comment, int delayMs = 0)
+    static async Task WriteResponseAsync(HttpListenerContext context, int delayMs = 0)
     {
-        string autoRefreshMeta = "<meta http-equiv=\"refresh\" content=\"2\">";
-        string responseString = $"<html><head>{autoRefreshMeta}</head><body><h1>{title}</h1>{comment}</body></html>";
-        byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+        // Always send the currentPage as the response
+        byte[] buffer = Encoding.UTF8.GetBytes(currentPage);
         context.Response.ContentLength64 = buffer.Length;
         await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
         if (delayMs > 0)
-            Console.WriteLine("Tick");
             await Task.Delay(delayMs);
-            Console.WriteLine("Tock");
         context.Response.OutputStream.Close();
     }
 
     static async Task HandleGetAsync(HttpListenerContext context)
     {
-        string comment = "<p>GET called.</p>";
-        await WriteResponseAsync(context, "Hello from C# HTTP Server! (GET)", comment, 2000);
+        // Just redraw the current page
+        await WriteResponseAsync(context, 2000);
     }
 
     static async Task HandlePostAsync(HttpListenerContext context)
@@ -93,8 +100,8 @@ class SimpleHttpServer
         {
             postData = await reader.ReadToEndAsync();
         }
-        string comment = $"<p>POST called. Payload:</p><pre>{WebUtility.HtmlEncode(postData)}</pre>";
-        await WriteResponseAsync(context, "POST data received:", comment, 2000);
+        UpdateCurrentPage($"<p>POST called. Payload:</p><pre>{WebUtility.HtmlEncode(postData)}</pre>");
+        await WriteResponseAsync(context, 2000);
     }
 
     static async Task HandlePutAsync(HttpListenerContext context)
@@ -104,20 +111,34 @@ class SimpleHttpServer
         {
             putData = await reader.ReadToEndAsync();
         }
-        string comment = $"<p>PUT called. Payload:</p><pre>{WebUtility.HtmlEncode(putData)}</pre>";
-        Console.WriteLine($"Response: {putData}");
-        await WriteResponseAsync(context, "PUT data received:", comment, 2000);
+        UpdateCurrentPage($"<p>PUT called. Payload:</p><pre>{WebUtility.HtmlEncode(putData)}</pre>");
+        await WriteResponseAsync(context, 2000);
     }
 
     static async Task HandleDeleteAsync(HttpListenerContext context)
     {
-        string comment = "<p>DELETE called.</p>";
-        await WriteResponseAsync(context, "DELETE received", comment, 2000);
+        UpdateCurrentPage("<p>DELETE called.</p>");
+        await WriteResponseAsync(context, 2000);
     }
 
     static async Task HandleOtherAsync(HttpListenerContext context)
     {
-        string comment = $"<p>{context.Request.HttpMethod} called.</p>";
-        await WriteResponseAsync(context, "Method not supported", comment, 2000);
+        UpdateCurrentPage($"<p>{context.Request.HttpMethod} called.</p>");
+        await WriteResponseAsync(context, 2000);
+    }
+
+    // Helper to update the current page with a new message, preserving the rest of the page
+    static void UpdateCurrentPage(string messageHtml)
+    {
+        // Try to inject the message into the body, or just append if not found
+        if (currentPage.Contains("</body>"))
+        {
+            int idx = currentPage.IndexOf("</body>", StringComparison.OrdinalIgnoreCase);
+            currentPage = currentPage.Insert(idx, messageHtml);
+        }
+        else
+        {
+            currentPage += messageHtml;
+        }
     }
 }

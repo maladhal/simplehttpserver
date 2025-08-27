@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SimpleHttpServer Landing</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        button { margin: 10px; padding: 10px 30px; font-size: 1.2em; }
+        form { display: inline; }
+    </style>
+</head>
+<body>
+    <h1>SimpleHttpServer Landing Page</h1>
+    <form method="GET" action="/">
+        <button type="submit">GET</button>
+    </form>
+    <form method="POST" action="/">
+        <button type="submit">POST</button>
+    </form>
+    <form method="PUT" action="/" onsubmit="return sendPut(event);">
+        <button type="submit">PUT</button>
+    </form>
+    <form method="DELETE" action="/" onsubmit="return sendDelete(event);">
+        <button type="submit">DELETE</button>
+    </form>
+    <script>
+        // For PUT and DELETE, use fetch since HTML forms don't support these methods directly
+        function sendPut(event) {
+            event.preventDefault();
+            fetch('/', { method: 'PUT', body: JSON.stringify({ message: 'PUT from landing page' }), headers: { 'Content-Type': 'application/json' } })
+                .then(r => r.text()).then(alert);
+            return false;
+        }
+        function sendDelete(event) {
+            event.preventDefault();
+            fetch('/', { method: 'DELETE' })
+                .then(r => r.text()).then(alert);
+            return false;
+        }
+    </script>
