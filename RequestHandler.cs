@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 
 public static class RequestHandler
 {
@@ -55,8 +56,27 @@ public static class RequestHandler
         {
             postData = await reader.ReadToEndAsync();
         }
-        PageState.UpdateCurrentPage($"<p>POST called. Payload:</p><pre>{WebUtility.HtmlEncode(postData)}</pre>");
-        await WriteResponseAsync(context, 2000);
+        // Try to parse JSON object
+        try
+        {
+            var jsonDoc = JsonDocument.Parse(postData);
+            HandlePostedJson(jsonDoc.RootElement);
+            PageState.UpdateCurrentPage($"<p>POST called. JSON parsed:</p><pre>{WebUtility.HtmlEncode(postData)}</pre>");
+        }
+        catch (JsonException)
+        {
+            PageState.UpdateCurrentPage($"<p>POST called. Invalid JSON:</p><pre>{WebUtility.HtmlEncode(postData)}</pre>");
+        }        await WriteResponseAsync(context, 2000);
+    }
+        // Function to handle the parsed JSON object
+    public static void HandlePostedJson(JsonElement json)
+    {
+        // Example: log the workflow_name if present
+        if (json.TryGetProperty("address1", out var code))
+        {
+            Console.WriteLine($"workflow_name: {code.GetString()}");
+        }
+        // Add further processing as needed
     }
 
     public static async Task HandlePutAsync(HttpListenerContext context)

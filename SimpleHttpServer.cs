@@ -7,7 +7,7 @@ public class SimpleHttpServer
 {
     // Global page state
     public static string currentPage = "";
-
+    public static string listenerUri = "https://localhost:5001/";
     public static async Task StartAsync()
     {
         Console.WriteLine("Select server mode:");
@@ -24,9 +24,9 @@ public class SimpleHttpServer
             currentPage = "<html><body><h1>Welcome!</h1></body></html>";
 
         HttpListener listener = new HttpListener();
-        listener.Prefixes.Add("http://localhost:5000/");
+        listener.Prefixes.Add(listenerUri);
         listener.Start();
-        Console.WriteLine("Server started at http://localhost:5000/");
+        Console.WriteLine("Server started at " + listenerUri);
 
         if (choice == "2")
         {
